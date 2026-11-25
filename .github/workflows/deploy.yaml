@@ -107,7 +107,7 @@ jobs:
       - name: Build site
         env:
           PATH_PREFIX: /${{ github.event.repository.name }}/
-        run: npm run eleventy:prod
+        run: npm run prod
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
@@ -146,6 +146,9 @@ jobs:
           OUTCOME: ${{ steps.deployment.outcome }}
           SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
+          if [ -z "$SITE_URL" ]; then
+            SITE_URL="https://${GITHUB_REPOSITORY_OWNER,,}.github.io/${GITHUB_REPOSITORY#*/}/"
+          fi
           if [ "$OUTCOME" = "success" ]; then
             status="succeeded"
           else
